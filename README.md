@@ -25,6 +25,7 @@ A full-stack personal finance app that helps users track their expenses, visuali
 
 **Frontend:**
 - React
+- Vite
 - Tailwind CSS
 - DaisyUI
 - Framer Motion

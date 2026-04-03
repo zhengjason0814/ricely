@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import Duck from '../components/Duck';
 import BudgetChart from '../components/BudgetChart';
+import PlaidLinkButton from '../components/PlaidLinkButton';
 import useBudgetStore from '../store/useBudgetStore';
-import api from '../api/axios';
 
 export default function Dashboard() {
   const { transactions, summary, fetchTransactions, fetchSummary, setBudget, syncTransactions } = useBudgetStore();
@@ -27,9 +27,8 @@ export default function Dashboard() {
     setSyncing(false);
   };
 
-  const handleLinkBank = async () => {
-    const { data } = await api.post('/api/plaid/link-token');
-    alert(`Plaid link token: ${data.link_token}\n(Integrate Plaid Link SDK to continue)`);
+  const handleLinked = async () => {
+    await handleSync();
   };
 
   return (
@@ -68,12 +67,7 @@ export default function Dashboard() {
         >
           {syncing ? 'Syncing...' : 'Sync Transactions'}
         </button>
-        <button
-          onClick={handleLinkBank}
-          className="bg-blue-400 hover:bg-blue-500 text-white px-4 py-2 rounded text-sm font-semibold"
-        >
-          Link Bank
-        </button>
+        <PlaidLinkButton onLinked={handleLinked} />
       </div>
 
       {transactions.length > 0 && (

@@ -8,6 +8,7 @@ export default function Dashboard() {
   const { transactions, summary, fetchTransactions, fetchSummary, setBudget, syncTransactions } = useBudgetStore();
   const [budgetInput, setBudgetInput] = useState('');
   const [syncing, setSyncing] = useState(false);
+  const [syncError, setSyncError] = useState('');
 
   useEffect(() => {
     fetchTransactions();
@@ -22,9 +23,15 @@ export default function Dashboard() {
 
   const handleSync = async () => {
     setSyncing(true);
-    await syncTransactions();
-    await fetchSummary();
-    setSyncing(false);
+    setSyncError('');
+    try {
+      await syncTransactions();
+      await fetchSummary();
+    } catch (err) {
+      setSyncError(err.response?.data?.message || 'Sync failed');
+    } finally {
+      setSyncing(false);
+    }
   };
 
   const handleLinked = async () => {
@@ -69,6 +76,8 @@ export default function Dashboard() {
         </button>
         <PlaidLinkButton onLinked={handleLinked} />
       </div>
+
+      {syncError && <p className="text-red-500 text-sm text-center mb-4">{syncError}</p>}
 
       {transactions.length > 0 && (
         <div className="mb-8">
